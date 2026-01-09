@@ -1,0 +1,216 @@
+/*==========================================================
+TSA Claims (2002–2017) — Midterm Project (SAS)
+Author: William Kwame Paintsil
+Course: Business Analytics Modeling
+Tool: SAS
+
+Description:
+- Imports TSAClaims2002_2017.csv
+- Cleans key categorical fields and dates
+- Flags date issues
+- Generates summary outputs and optional PDF report
+
+Note:
+- Dataset is not included in this GitHub repo.
+- Update paths below to run locally.
+==========================================================*/
+
+/*======================
+  0) PARAMETERS (EDIT)
+======================*/
+%let DATA_PATH=./data/TSAClaims2002_2017.csv;     /* <-- update local path */
+%let OUTPUT_PDF=./outputs/ClaimsReport.pdf;       /* <-- update local path */
+%let STATE_FILTER=Texas;                          /* dynamic input */
+
+/*======================
+  1) IMPORT DATA
+======================*/
+filename reffile "&DATA_PATH";
+
+proc import datafile=reffile
+  dbms=csv
+  out=work.claims_raw
+  replace;
+  getnames=yes;
+  guessingrows=max;
+run;
+
+proc contents data=work.claims_raw;
+run;
+
+/*======================
+  2) QUICK EXPLORATION
+======================*/
+title "Frequency Table of Claim_Type (Raw)";
+proc freq data=work.claims_raw;
+  tables Claim_Type;
+run;
+
+title "Frequency Table of Claim_Site (Raw)";
+proc freq data=work.claims_raw;
+  tables Claim_Site;
+run;
+
+title "Frequency Table of Disposition (Raw)";
+proc freq data=work.claims_raw;
+  tables Disposition;
+run;
+
+title "Statistics Summary of Incident_Date (Raw)";
+proc univariate data=work.claims_raw;
+  var Incident_Date;
+run;
+
+title "Statistics Summary of Date_Received (Raw)";
+proc univariate data=work.claims_raw;
+  var Date_Received;
+run;
+
+/*======================
+  3) REMOVE DUPLICATES
+======================*/
+proc sort data=work.claims_raw
+  out=work.claims_dedup
+  nodupkey
+  dupout=work.claims_duplicates;
+  by _all_;
+run;
+
+/* Sort by Incident_Date for reporting */
+proc sort data=work.claims_dedup
+  out=work.claims_sorted;
+  by Incident_Date;
+run;
+
+proc contents data=work.claims_sorted;
+run;
+
+/*======================
+  4) CLEANING + FEATURE ENGINEERING
+======================*/
+data work.claims_cleaned;
+  set work.claims_sorted;
+
+  /* Clean Claim_Type */
+  if Claim_Type in ("-", "") then Claim_Type="Unknown";
+  else if Claim_Type in ("Passenger Property Loss/Personal Injur",
+                         "Passenger Property Loss/Personal Injury") then Claim_Type="Personal Property Loss";
+  else if Claim_Type="Property Damage/Personal Injury" then Claim_Type="Property Damage";
+
+  /* Clean Claim_Site */
+  if Claim_Site in ("-", "") then Claim_Site="Unknown";
+
+  /* Clean Disposition */
+  if Disposition in ("-", "") then Disposition="Unknown";
+  else if Disposition="Closed:Canceled" then Disposition="Closed: Canceled";
+  else if Disposition="Closed:Contractor Claim" then Disposition="Closed: Contractor Claim";
+  else if Disposition="losed: Contractor Claim" then Disposition="Closed: Contractor Claim"; /* typo fix */
+
+  /* Standardize state fields */
+  StateName = propcase(StateName);
+  State     = upcase(State);
+
+  /* Flag date issues */
+  length Date_Issues $12;
+  if (Incident_Date=.
+      or Date_Received=.
+      or year(Incident_Date)<2002
+      or year(Date_Received)<2002
+      or year(Incident_Date)>2017
+      or year(Date_Received)>2017) then Date_Issues="Needs Review";
+  else Date_Issues="";  /* blank = OK */
+
+  /* Permanent formats */
+  format Close_Amount dollar10.2;
+  format Date_Received date9. Incident_Date date9.;
+
+  /* Labels */
+  label Claim_Type    ="Claim Type"
+        Claim_Site    ="Claim Site"
+        Close_Amount  ="Close Amount"
+        Incident_Date ="Incident Date"
+        Date_Received ="Date Received"
+        Claim_Number  ="Claim Number"
+        Airport_Code  ="Airport Code"
+        Airport_Name  ="Airport Name"
+        Item_Category ="Item Category";
+
+  drop City County;
+run;
+
+title "TSA Claims 2002–2017 (Cleaned)";
+proc contents data=work.claims_cleaned;
+run;
+
+/*======================
+  5) REPORT REQUIREMENTS
+======================*/
+
+/* Q1: Date issues frequency */
+title "Date Issues in the Overall Data";
+proc freq data=work.claims_cleaned;
+  tables Date_Issues;
+run;
+
+/* Q2: Claims per year (Incident Date) excluding date issues */
+title "Claims per Year of Incident Date (Valid Dates Only)";
+ods graphics on;
+proc freq data=work.claims_cleaned;
+  tables Incident_Date / nocum nopercent plots=freqplot;
+  format Incident_Date year4.;
+  where Date_Issues = "";
+run;
+ods graphics off;
+
+/* Q3: Frequency distributions for selected state (valid dates only) */
+title "Frequency Distributions (State = &STATE_FILTER, Valid Dates Only)";
+proc freq data=work.claims_cleaned;
+  tables Claim_Type Claim_Site Disposition / nocum nopercent plots=freqplot;
+  where StateName="&STATE_FILTER" and Date_Issues = "";
+run;
+
+/* Q3d: Summary stats for Close_Amount for selected state */
+title "Close Amount Summary (State = &STATE_FILTER, Valid Dates Only)";
+proc means data=work.claims_cleaned mean min max maxdec=0;
+  var Close_Amount;
+  where StateName="&STATE_FILTER" and Date_Issues = "";
+run;
+
+/*======================
+  6) OPTIONAL: EXPORT TO PDF
+======================*/
+ods pdf file="&OUTPUT_PDF" style=journal startpage=no pdftoc=1;
+ods noproctitle;
+
+ods proclabel "Date Issues";
+title "Date Issues in the Overall Data";
+proc freq data=work.claims_cleaned;
+  tables Date_Issues;
+run;
+
+ods proclabel "Claims Per Year";
+title "Claims per Year of Incident Date (Valid Dates Only)";
+ods graphics on;
+proc freq data=work.claims_cleaned;
+  tables Incident_Date / nocum nopercent plots=freqplot;
+  format Incident_Date year4.;
+  where Date_Issues = "";
+run;
+ods graphics off;
+
+ods proclabel "State Distributions";
+title "Frequency Distributions (State = &STATE_FILTER, Valid Dates Only)";
+proc freq data=work.claims_cleaned;
+  tables Claim_Type Claim_Site Disposition / nocum nopercent plots=freqplot;
+  where StateName="&STATE_FILTER" and Date_Issues = "";
+run;
+
+ods proclabel "Close Amount Summary";
+title "Close Amount Summary (State = &STATE_FILTER, Valid Dates Only)";
+proc means data=work.claims_cleaned mean min max maxdec=0;
+  var Close_Amount;
+  where StateName="&STATE_FILTER" and Date_Issues = "";
+run;
+
+ods pdf close;
+title;
