@@ -1,0 +1,18 @@
+{
+  "_captured_at": "2026-07-14T15:11:46Z",
+  "_captured_run_id": "r_ec8e096378a14e90b562eafd9e0170fd",
+  "status": "ok",
+  "exit_code": 0,
+  "log_contains": [
+    "NOTE: Option TITLE changed to Summary Statistics of Close Amount by StateName.",
+    "NOTE: PROC MEANS statement used."
+  ],
+  "log_does_not_contain": [
+    "ERROR:",
+    "[JENNER-ERROR"
+  ],
+  "diagnostics": {
+    "parse_warnings": [],
+    "runtime_warnings": []
+  }
+}

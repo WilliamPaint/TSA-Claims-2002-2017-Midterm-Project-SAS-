@@ -1,0 +1,7 @@
+{
+  "bundle": "t004_means_close_amount",
+  "source_file": "notebook/TSA Claims Project Code.sas",
+  "source_blob_sha": "e763de2b913a90181c2fdd3e810530a95085d637",
+  "source_commit": "4eab702ca4aaea02bf6de21c455fc4aba320dec5",
+  "notes": "The state-filtered analysis (Question 3): %let StateName=Texas drives a PROC FREQ over Claim_Type/Claim_Site/Disposition and a PROC MEANS of Close_Amount, both filtered where StateName=\"&StateName\" and Date_Issues is missing. FREQ/MEANS verbatim; sample data built + cleaned inline in autoexec."
+}

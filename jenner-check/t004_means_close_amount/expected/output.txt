@@ -1,0 +1,32 @@
+                                                   The FREQ Procedure
+
+Claim_Type                                 Frequency
+-----------------------------------------------------
+Missed Flight                                      1
+Motor Vehicle                                      1
+Passenger Property Loss/Personal Injur             1
+Passenger Property Loss/Personal Injury            3
+Property Damage                                    4
+Property Damage/Personal Injury                    1
+
+Claim_Site         Frequency
+-----------------------------
+Checked Baggage            6
+Checkpoint                 4
+Motor Vehicle              1
+
+Disposition        Frequency
+-----------------------------
+Approve in Full            3
+Closed:Canceled            1
+Deny                       4
+Settle                     3
+                                    Summary Statistics of Close Amount by StateName
+
+                                                  The MEANS Procedure
+
+ Variable               Mean     Minimum         Maximum
+ -------------------------------------------------------
+ Close_Amount      $9,899.55       $0.00     $106,000.00
+ -------------------------------------------------------
+

@@ -1,0 +1,7 @@
+{
+  "bundle": "t003_clean_dataflags",
+  "source_file": "notebook/TSA Claims Project Code.sas",
+  "source_blob_sha": "e763de2b913a90181c2fdd3e810530a95085d637",
+  "source_commit": "4eab702ca4aaea02bf6de21c455fc4aba320dec5",
+  "notes": "The core cleaning DATA step verbatim from source: PROC SORT then recode missing/'-' to Unknown, PROPCASE/UPCASE on state fields, the Date_Issues out-of-range flag, permanent DOLLAR/DATE formats and labels, drop City County; ends with the Date_Issues PROC FREQ. Sample data built inline in autoexec."
+}
