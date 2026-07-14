@@ -1,0 +1,29 @@
+
+PROC CONTENTS
+-------------------------------------------------------------------------------
+
+Data Set Name: WORK.claims_cleaned
+Observations:  20
+Variables:     14
+
+Variables (in alphabetical order):
+
+  #  Variable       Type    Len  Format  Label
+---  -------------  ----  -----  ------  -----
+  1  Airport_Code   Char      3          
+  2  Airport_Name   Char     24          
+  3  City           Char     13          
+  4  Claim_Number    Num      8          
+  5  Claim_Site     Char     15          
+  6  Claim_Type     Char     39          
+  7  Close_Amount    Num      8          
+  8  County         Char     13          
+  9  Date_Received   Num      8  DATE9.  
+ 10  Disposition    Char     23          
+ 11  Incident_Date   Num      8  DATE9.  
+ 12  Item_Category  Char     18          
+ 13  State          Char      2          
+ 14  StateName      Char     10          
+
+-------------------------------------------------------------------------------
+

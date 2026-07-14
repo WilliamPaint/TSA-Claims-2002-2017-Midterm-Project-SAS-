@@ -1,0 +1,7 @@
+{
+  "bundle": "t002_freq_categorical",
+  "source_file": "notebook/TSA Claims Project Code.sas",
+  "source_blob_sha": "e763de2b913a90181c2fdd3e810530a95085d637",
+  "source_commit": "4eab702ca4aaea02bf6de21c455fc4aba320dec5",
+  "notes": "Runs the program's exploratory PROC FREQ tables on Claim_Type, Claim_Site and Disposition. Sample data built inline in autoexec (stands in for the CSV the repo does not distribute); FREQ statements verbatim from the source."
+}

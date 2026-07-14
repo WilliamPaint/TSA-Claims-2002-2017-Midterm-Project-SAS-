@@ -1,0 +1,7 @@
+{
+  "bundle": "t001_build_contents",
+  "source_file": "notebook/TSA Claims Project Code.sas",
+  "source_blob_sha": "e763de2b913a90181c2fdd3e810530a95085d637",
+  "source_commit": "4eab702ca4aaea02bf6de21c455fc4aba320dec5",
+  "notes": "Builds a sample claims dataset inline (standing in for the imported TSAClaims2002_2017.csv, which the repo does not distribute) and inspects it with the program's PROC CONTENTS step."
+}

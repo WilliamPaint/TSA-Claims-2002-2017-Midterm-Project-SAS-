@@ -1,0 +1,8 @@
+                                            Date Issues in the Overall Data
+
+                                                   The FREQ Procedure
+
+                                          Cumulative    Cumulative
+Date_Issues     Frequency    Percent     Frequency      Percent
+---------------------------------------------------------------------
+Needs Review            2    100.00            2       100.00
